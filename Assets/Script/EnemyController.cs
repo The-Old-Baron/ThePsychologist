@@ -13,23 +13,12 @@ public class EnemyController : Entity
     public Light2D light;
     public bool collidingWithPlayer;
     public GameObject flag;
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            collidingWithPlayer = true;
-        }
-    }
+    public float knockbackForce = 5f; // Adicione uma variável para a força do knockback
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            collidingWithPlayer = false;
-        }
-    }
     private void Start()
     {
+        //find flag in scene;
+        flag = GameObject.Find("Flag");
         rb = GetComponent<Rigidbody2D>();
         lastAttackTime = -enemy.attackCooldown;
         light.color = enemy.lightColor;
@@ -47,7 +36,9 @@ public class EnemyController : Entity
             rb.MovePosition(rb.position + direction * enemy.speed * Time.deltaTime);
         }
 
-        if(collidingWithPlayer && Time.time >= lastAttackTime + enemy.attackCooldown)
+        var raycast = Physics2D.Raycast(transform.position, Player.Instance.transform.position - transform.position, enemy.attackRange, LayerMask.GetMask("Player"));
+
+        if (raycast && Time.time >= lastAttackTime + enemy.attackCooldown)
         {
             Attack();
             lastAttackTime = Time.time;
@@ -65,10 +56,13 @@ public class EnemyController : Entity
         Player.Instance.TakeDamage(enemy.damage);
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector2 knockbackDirection)
     {
         Life -= damage;
         lifeBar.gameObject.active = true;
+
+        // Aplicar força de knockback
+        rb.AddForce(knockbackDirection.normalized * knockbackForce, ForceMode2D.Impulse);
 
         if (Life <= 0)
         {
@@ -76,21 +70,23 @@ public class EnemyController : Entity
         }
         UpdateLifeBar();
     }
+
     public Slider lifeBar;
     public void UpdateLifeBar()
     {
         lifeBar.value = Life;
-        light.pointLightOuterRadius = curRadio * (Life / enemy.maxHealth) +.41f;
+        light.pointLightOuterRadius = curRadio * (Life / enemy.maxHealth) + .41f;
     }
 
     public void Healling()
     {
         if (enemy.currentHealth < enemy.maxHealth)
         {
-            enemy.currentHealth += enemy.healling;
+            Life += enemy.healling;
         }
         UpdateLifeBar();
     }
+
     public GameObject DropPrefab;
     private void OnDestroy()
     {
@@ -103,6 +99,4 @@ public class EnemyController : Entity
             Instantiate(DropPrefab, flag.transform.position, Quaternion.identity);
         }
     }
-
-    
 }

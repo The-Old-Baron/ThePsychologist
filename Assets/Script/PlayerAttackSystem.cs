@@ -1,15 +1,21 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerAttackSystem : MonoBehaviour
 {
     private Player player;
     public float attackCooldown = 1f;
     private float lastAttackTime;
+    private Light2D lanternLight;
+    public float lightIntensityDuringAttack = 3f;
+    public float lightFadeDuration = 1f;
 
     private void Start()
     {
         player = GetComponent<Player>();
         lastAttackTime = -attackCooldown; // Permite atacar imediatamente no início
+        lanternLight = player.Lantern.GetComponentInChildren<Light2D>();
     }
 
     void Update()
@@ -23,9 +29,16 @@ public class PlayerAttackSystem : MonoBehaviour
 
     void Attack()
     {
+        StartCoroutine(HandleLanternLight());
         switch (player.playerEquippment.Weapon)
         {
             case WeaponType.Sword:
+                PerformShortRangeAttack();
+                break;
+            case WeaponType.Shield:
+                PerformShortRangeAttack();
+                break;
+            case WeaponType.Spear:
                 PerformShortRangeAttack();
                 break;
             case WeaponType.Staff:
@@ -40,41 +53,7 @@ public class PlayerAttackSystem : MonoBehaviour
 
     void PerformShortRangeAttack()
     {
-        // Lógica para ataque de curta distância
-        Vector2 direction = Vector2.zero;
-
-        switch (player.curDirection)
-        {
-            case MovementDirection.Up:
-                direction = Vector2.up;
-                break;
-            case MovementDirection.Down:
-                direction = Vector2.down;
-                break;
-            case MovementDirection.Left:
-                direction = Vector2.left;
-                break;
-            case MovementDirection.Right:
-                direction = Vector2.right;
-                break;
-            default:
-                Debug.LogWarning("Direção não suportada.");
-                return;
-        }
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 1f);
-        if (hit.collider != null)
-        {
-            // Lógica para quando o ataque acerta algo
-            Debug.Log("Ataque de curta distância realizado e acertou: " + hit.collider.name);
-        }
-        else
-        {
-            Debug.Log("Ataque de curta distância realizado, mas não acertou nada.");
-        }
-
-        // Desenhar o gizmo da área de alcance
-        Debug.DrawLine(transform.position, transform.position + (Vector3)direction, Color.red, 1f);
+        Player.Instance.Lantern.GetComponentInChildren<LanternAttack>().Attack();
     }
 
     public float VelocidadeDeProjetil;
@@ -84,7 +63,25 @@ public class PlayerAttackSystem : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePos - transform.position).normalized;
         GameObject projectile = Instantiate(player.playerEquippment.projetilPrefab, transform.position, Quaternion.identity);
+        projectile.GetComponent<Bullet>().damage = player.PlayerStatus.Damage;
         projectile.GetComponent<Rigidbody2D>().velocity = direction * VelocidadeDeProjetil;
+
         Debug.Log("Ataque de longa distância realizado.");
+    }
+
+    private IEnumerator HandleLanternLight()
+    {
+        float initialIntensity = lanternLight.intensity;
+        lanternLight.intensity = lightIntensityDuringAttack;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < lightFadeDuration)
+        {
+            lanternLight.intensity = Mathf.Lerp(lightIntensityDuringAttack, initialIntensity, elapsedTime / lightFadeDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        lanternLight.intensity = initialIntensity;
     }
 }

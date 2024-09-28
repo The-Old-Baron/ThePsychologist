@@ -422,6 +422,7 @@ MonoBehaviour:
   rb: {fileID: 3129505450855163046}
   light: {fileID: 182189442685849293}
   collidingWithPlayer: 0
+  flag: {fileID: 0}
   lifeBar: {fileID: 1477308668435386908}
   DropPrefab: {fileID: 3473966926569055286, guid: b53983362cbbd5440b289f79599aa06c, type: 3}
 --- !u!50 &3129505450855163046
@@ -439,7 +440,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -450,7 +451,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &6335306520333093619
 CircleCollider2D:
   m_ObjectHideFlags: 0

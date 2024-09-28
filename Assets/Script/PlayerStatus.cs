@@ -11,6 +11,13 @@ public class PlayerStatus : MonoBehaviour
     public int Wisdom { get; private set; }
     public int Charisma { get; private set; }
 
+    public int Health { get; private set; }
+    public int Damage { get; private set; }
+    public int Speed { get; private set; }
+    public int AttackCooldown { get; private set; }
+    public int Defence { get; private set; }
+    public int Proficience { get; private set; }
+
     private Dictionary<string, Item> inventory = new Dictionary<string, Item>();
 
     void Start()
@@ -22,6 +29,12 @@ public class PlayerStatus : MonoBehaviour
         Intelligence = 10;
         Wisdom = 10;
         Charisma = 10;
+        Health = 10;
+        Damage = 10;
+        Speed = 10;
+        AttackCooldown = 10;
+        Defence = 10;
+        Proficience = 10;
     }
    
     public void AddItem(Item item)

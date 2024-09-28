@@ -45,9 +45,29 @@ public class Player : Entity
         // Check for player status display input
         if (Input.GetKeyDown(KeyCode.L))
         {
-            DisplayPlayerStatus();
+        }
+        if(Input.GetKey(KeyCode.Tab))
+        {
+            AttributsHud.Instance.UpdatePlayerStatus(PlayerStatus);
+        }
+        else{
+            AttributsHud.Instance.PlayerStatus.SetActive(false);
         }
 
+        //Pause game on esc and show menu
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Time.timeScale == 1)
+            {
+                Time.timeScale = 0;
+                PlayerHud.Instance.PauseMenu.Pause();
+            }
+            else
+            {
+                Time.timeScale = 1;
+                PlayerHud.Instance.PauseMenu.Resume();
+            }
+        }
         // Handle player movement
         Move();
 
@@ -62,17 +82,13 @@ public class Player : Entity
         {
             InteractWithItem();
         }
+        UpdatePlayerStatus();
     }
 
-    private void DisplayPlayerStatus()
-    {
-        Debug.Log("Strength: " + PlayerStatus.Strength);
-        Debug.Log("Dexterity: " + PlayerStatus.Dexterity);
-        Debug.Log("Constitution: " + PlayerStatus.Constitution);
-        Debug.Log("Intelligence: " + PlayerStatus.Intelligence);
-        Debug.Log("Wisdom: " + PlayerStatus.Wisdom);
-        Debug.Log("Charisma: " + PlayerStatus.Charisma);
+    public void UpdatePlayerStatus(){
+        
     }
+  
 
     private void Move()
     {

@@ -6,4 +6,6 @@ public class Entity : MonoBehaviour
 {
     private float _life;
     public float Life;
+    public float MaxLife;
+
 }

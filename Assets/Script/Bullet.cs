@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
         EnemyController enemy = hitInfo.GetComponent<EnemyController>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage, new Vector2(5,5));
         }
         Destroy(gameObject);
     }
