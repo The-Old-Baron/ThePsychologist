@@ -19,6 +19,24 @@ public class PlayerAttackSystem : MonoBehaviour
         lastAttackTime = -attackCooldown; // Allows immediate attack at the start
         lanternLight = player.Lantern.GetComponentInChildren<Light2D>();
         
+        switch(player.playerEquippment.Weapon)
+        {
+            case WeaponType.Sword:
+                AttackColor = Color.red;
+                break;
+            case WeaponType.Shield:
+                AttackColor = Color.blue;
+                break;
+            case WeaponType.Spear:
+                AttackColor = Color.green;
+                break;
+            case WeaponType.Staff:
+                AttackColor = Color.yellow;
+                break;
+            default:
+                AttackColor = Color.white;
+                break;
+        }
     }
 
     private void Update()

@@ -126,5 +126,6 @@ public class EnemyController : Entity
             flag.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
             Instantiate(DropPrefab, flag.transform.position, Quaternion.identity);
         }
+        Player.Instance.PlayerStatus.AddProficience(enemy.coin);
     }
 }

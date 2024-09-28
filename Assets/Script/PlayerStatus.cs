@@ -19,7 +19,10 @@ public class PlayerStatus : MonoBehaviour
     public int Proficience { get; private set; }
 
     private Dictionary<string, Item> inventory = new Dictionary<string, Item>();
-
+    public void AddProficience(int value)
+    {
+        Proficience += value;
+    }
     void Start()
     {
         // Inicializa os status do jogador

@@ -38,6 +38,17 @@ public class LanternAttack : MonoBehaviour
             enemiesInRange.Add(collision.gameObject);
             Debug.Log("Enemy entered: " + collision.gameObject.name);
         }
+        // Verifica se o objeto que entrou no trigger é interativo com luz
+        if (collision.gameObject.CompareTag("InteractiveWithLight"))
+        {
+            // Executa a ação específica do objeto interativo
+            var interactiveComponent = collision.gameObject.GetComponent<IInteractiveWithLight>();
+            if (interactiveComponent != null)
+            {
+                interactiveComponent.InteractWithLight();
+                Debug.Log("Interactive action executed on: " + collision.gameObject.name);
+            }
+        }
     }
 
     // Método chamado quando outro collider sai do trigger

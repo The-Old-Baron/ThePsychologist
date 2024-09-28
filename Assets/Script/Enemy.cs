@@ -24,6 +24,7 @@ public class Enemy : ScriptableObject
 
     // Drop-related attributes
     [Header("Drop Attributes")]
+    public int coin;               // Amount of coins the enemy can drop
     public float chanceToDropItem;   // Chance to drop an item upon defeat
     public Item item;                // Item that can be dropped
 
