@@ -13,6 +13,7 @@ public enum MovementDirection
 public class Player : Entity
 {
     public static Player Instance;
+
     // Public fields
     public PlayerStatus PlayerStatus;
     public PlayerEquippment playerEquippment;
@@ -26,12 +27,11 @@ public class Player : Entity
 
     // Private fields
     private Rigidbody2D rb;
-    public MovementDirection curDirection;
+    private MovementDirection curDirection;
 
     private void Start()
     {
-        // Initialize Rigidbody2D component
-
+        // Initialize components
         rb = GetComponent<Rigidbody2D>();
         PlayerStatus = GetComponent<PlayerStatus>();
         playerEquippment = GetComponent<PlayerEquippment>();
@@ -42,53 +42,51 @@ public class Player : Entity
 
     private void Update()
     {
-        // Check for player status display input
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-        }
-        if(Input.GetKey(KeyCode.Tab))
+        HandleInput();
+        Move();
+        CheckForNearbyItems();
+        RotateLanternTowardsMouse();
+        UpdatePlayerStatus();
+    }
+
+    private void HandleInput()
+    {
+        // Toggle player status display
+        if (Input.GetKey(KeyCode.Tab))
         {
             AttributsHud.Instance.UpdatePlayerStatus(PlayerStatus);
         }
-        else{
+        else
+        {
             AttributsHud.Instance.PlayerStatus.SetActive(false);
         }
 
-        //Pause game on esc and show menu
+        // Pause game on Escape key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Time.timeScale == 1)
-            {
-                Time.timeScale = 0;
-                PlayerHud.Instance.PauseMenu.Pause();
-            }
-            else
-            {
-                Time.timeScale = 1;
-                PlayerHud.Instance.PauseMenu.Resume();
-            }
+            TogglePause();
         }
-        // Handle player movement
-        Move();
 
-        // Check for nearby items
-        CheckForNearbyItems();
-
-        // Handle lantern rotation towards mouse position
-        RotateLanternTowardsMouse();
-
-        // Check for item interaction input
+        // Interact with item
         if (Input.GetKeyDown(KeyCode.E))
         {
             InteractWithItem();
         }
-        UpdatePlayerStatus();
     }
 
-    public void UpdatePlayerStatus(){
-        
+    private void TogglePause()
+    {
+        if (Time.timeScale == 1)
+        {
+            Time.timeScale = 0;
+            PlayerHud.Instance.PauseMenu.Pause();
+        }
+        else
+        {
+            Time.timeScale = 1;
+            PlayerHud.Instance.PauseMenu.Resume();
+        }
     }
-  
 
     private void Move()
     {
@@ -172,6 +170,7 @@ public class Player : Entity
     {
         Instance = null;
     }
+
     public void TakeDamage(float damage)
     {
         Life -= damage;
@@ -179,5 +178,10 @@ public class Player : Entity
         {
             Debug.Log("Player died!");
         }
+    }
+
+    public void UpdatePlayerStatus()
+    {
+        // Placeholder for updating player status
     }
 }

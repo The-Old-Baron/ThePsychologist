@@ -4,45 +4,68 @@ using UnityEngine;
 
 public class PauseGame : MonoBehaviour
 {
+    // Variável estática para verificar se o jogo está pausado
     public static bool GameIsPaused = false;
-    public GameObject pauseMenuUI;
-    public GameObject ConfigurationsUI;
-    public GameObject BestiaryUI;
 
+    // Referências para os diferentes menus da UI
+    public GameObject pauseMenuUI;
+    public GameObject configurationsUI;
+    public GameObject bestiaryUI;
+
+    // Método para retomar o jogo
     public void Resume()
     {
+        // Desativa todos os menus
         pauseMenuUI.SetActive(false);
-        ConfigurationsUI.SetActive(false);
-        BestiaryUI.SetActive(false);
+        configurationsUI.SetActive(false);
+        bestiaryUI.SetActive(false);
+
+        // Retoma o tempo do jogo
         Time.timeScale = 1f;
         GameIsPaused = false;
+
+        // Desativa o objeto do script
         gameObject.SetActive(false);
     }
+
+    // Método para pausar o jogo
     public void Pause()
     {
+        // Ativa o menu de pausa
         pauseMenuUI.SetActive(true);
+
+        // Ativa o objeto do script
         gameObject.SetActive(true);
+
+        // Pausa o tempo do jogo
         Time.timeScale = 0f;
         GameIsPaused = true;
     }
-    public void ConfigurationsUIOpen()
+
+    // Método para abrir a UI de configurações
+    public void OpenConfigurationsUI()
     {
+        // Desativa o menu de pausa e ativa o menu de configurações
         pauseMenuUI.SetActive(false);
-        ConfigurationsUI.SetActive(true);
+        configurationsUI.SetActive(true);
     }
 
-    public void BestiaryUIOpen()
+    // Método para abrir a UI do bestiário
+    public void OpenBestiaryUI()
     {
+        // Desativa o menu de pausa e ativa o menu do bestiário
         pauseMenuUI.SetActive(false);
-        BestiaryUI.SetActive(true);
+        bestiaryUI.SetActive(true);
     }
 
+    // Método para salvar o jogo
     public void SaveGame()
     {
-        //Save game
+        // Implementar lógica de salvar jogo
     }
 
-    public void Sair()
+    // Método para sair do jogo
+    public void QuitGame()
     {
         Application.Quit();
     }

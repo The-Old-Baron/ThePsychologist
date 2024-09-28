@@ -10,74 +10,80 @@ public class PlayerAttackSystem : MonoBehaviour
     private Light2D lanternLight;
     public float lightIntensityDuringAttack = 3f;
     public float lightFadeDuration = 1f;
-
+    public float projectileSpeed;
+    public Color AttackColor;
     private void Start()
     {
+        // Initialize player and lantern light
         player = GetComponent<Player>();
-        lastAttackTime = -attackCooldown; // Permite atacar imediatamente no início
+        lastAttackTime = -attackCooldown; // Allows immediate attack at the start
         lanternLight = player.Lantern.GetComponentInChildren<Light2D>();
+        
     }
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetMouseButton(0) && Time.time >= lastAttackTime + attackCooldown) // MouseButton1
+        // Check for attack input and cooldown
+        if (Input.GetMouseButton(0) && Time.time >= lastAttackTime + attackCooldown)
         {
             Attack();
             lastAttackTime = Time.time;
         }
     }
 
-    void Attack()
+    private void Attack()
     {
+        // Handle lantern light effect during attack
         StartCoroutine(HandleLanternLight());
+
+        // Determine attack type based on equipped weapon
         switch (player.playerEquippment.Weapon)
         {
             case WeaponType.Sword:
-                PerformShortRangeAttack();
-                break;
             case WeaponType.Shield:
-                PerformShortRangeAttack();
-                break;
             case WeaponType.Spear:
                 PerformShortRangeAttack();
                 break;
             case WeaponType.Staff:
                 PerformLongRangeAttack();
                 break;
-            // Adicione outros tipos de armas aqui
             default:
-                Debug.LogWarning("Tipo de arma não suportado.");
+                Debug.LogWarning("Unsupported weapon type.");
                 break;
         }
     }
 
-    void PerformShortRangeAttack()
+    private void PerformShortRangeAttack()
     {
-        Player.Instance.Lantern.GetComponentInChildren<LanternAttack>().Attack();
+        // Perform short-range attack using the lantern
+        player.Lantern.GetComponentInChildren<LanternAttack>().Attack();
     }
 
-    public float VelocidadeDeProjetil;
-    void PerformLongRangeAttack()
+    private void PerformLongRangeAttack()
     {
-        // Dispara um projetil virado para o sentido do mouse
+        // Perform long-range attack by shooting a projectile towards the mouse position
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePos - transform.position).normalized;
         GameObject projectile = Instantiate(player.playerEquippment.projetilPrefab, transform.position, Quaternion.identity);
         projectile.GetComponent<Bullet>().damage = player.PlayerStatus.Damage;
-        projectile.GetComponent<Rigidbody2D>().velocity = direction * VelocidadeDeProjetil;
+        projectile.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
 
-        Debug.Log("Ataque de longa distância realizado.");
+        Debug.Log("Long-range attack performed.");
     }
 
     private IEnumerator HandleLanternLight()
     {
+        // Temporarily increase lantern light intensity during attack and then fade it back
         float initialIntensity = lanternLight.intensity;
         lanternLight.intensity = lightIntensityDuringAttack;
-
+        lanternLight.color = Color.red;
+        lanternLight.volumeIntensity = 0.09f;
         float elapsedTime = 0f;
         while (elapsedTime < lightFadeDuration)
         {
             lanternLight.intensity = Mathf.Lerp(lightIntensityDuringAttack, initialIntensity, elapsedTime / lightFadeDuration);
+            lanternLight.color = Color.Lerp(Color.red, Color.white, elapsedTime / lightFadeDuration);
+            lanternLight.volumeIntensity = Mathf.Lerp(0.09f, 0f, elapsedTime / lightFadeDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
