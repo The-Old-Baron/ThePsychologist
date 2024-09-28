@@ -48,6 +48,9 @@ TagManager:
   - name: Player
     uniqueID: 3221616649
     locked: 0
+  - name: Gore
+    uniqueID: 445668547
+    locked: 0
   - name: Effects
     uniqueID: 3655140989
     locked: 0

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5172455781644831707}
   - component: {fileID: 8295070040993177611}
   - component: {fileID: 6256512257542791628}
+  - component: {fileID: 4255178761391751955}
   m_Layer: 0
   m_Name: Projetil
   m_TagString: Untagged
@@ -29,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 3587942647993464315}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.9069, y: 0.4034, z: 0.011961557}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalPosition: {x: 1.87401, y: 0.37098, z: 0.011961557}
+  m_LocalScale: {x: 0.07, y: 0.07, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -125,8 +126,8 @@ MonoBehaviour:
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 0.09
-  m_PointLightOuterRadius: 0.42
+  m_PointLightInnerRadius: 0.009
+  m_PointLightOuterRadius: 0.09
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -199,3 +200,17 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.1
+--- !u!114 &4255178761391751955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3587942647993464315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12c564853f721a1408490cc73e247af4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 4
+  rb: {fileID: 8295070040993177611}

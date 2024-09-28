@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc21e594d03e1e45b64308a2330de49, type: 3}
+  m_Name: TesteEnemy[
+  m_EditorClassIdentifier: 
+  attackCooldown: 1
+  speed: 2
+  lightColor: {r: 1, g: 0.920817, b: 0, a: 1}
+  lightIntensity: 1
+  attackRange: 5
+  damage: 50
+  chaseRange: 5
+  chanceToDropItem: 5
+  maxHealth: 50
+  currentHealth: 50
+  item: {fileID: 11400000, guid: 2d89f58736949d344b7fbe14a9cae47b, type: 2}
+  healling: 1
+  heallingCooldown: 1
+  ID: 0
+  description: 
+  name: 
+  sprite: {fileID: 0}
+  enemyType: 0

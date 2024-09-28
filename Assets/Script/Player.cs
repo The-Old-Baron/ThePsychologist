@@ -12,6 +12,7 @@ public enum MovementDirection
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : Entity
 {
+    public static Player Instance;
     // Public fields
     public PlayerStatus PlayerStatus;
     public PlayerEquippment playerEquippment;
@@ -25,7 +26,7 @@ public class Player : Entity
 
     // Private fields
     private Rigidbody2D rb;
-    private MovementDirection curDirection;
+    public MovementDirection curDirection;
 
     private void Start()
     {
@@ -36,6 +37,7 @@ public class Player : Entity
         playerEquippment = GetComponent<PlayerEquippment>();
         playerAttackSystem = GetComponent<PlayerAttackSystem>();
 
+        Instance = this;
     }
 
     private void Update()
@@ -148,5 +150,18 @@ public class Player : Entity
     private void ShowCollectItem(Item item)
     {
         interactText.text = "Pressione E para pegar " + item.Name;
+    }
+
+    private void OnDestroy()
+    {
+        Instance = null;
+    }
+    public void TakeDamage(float damage)
+    {
+        Life -= damage;
+        if (Life <= 0)
+        {
+            Debug.Log("Player died!");
+        }
     }
 }
