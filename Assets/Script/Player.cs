@@ -1,9 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager.UI;
-using UnityEditor.Search;
 using UnityEngine;
 
 public enum MovementDirection
@@ -13,71 +8,81 @@ public enum MovementDirection
     Left,
     Right
 }
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : Entity
 {
+    // Public fields
+    public PlayerStatus PlayerStatus;
+    public PlayerEquippment playerEquippment;
+    public PlayerAttackSystem playerAttackSystem;
     public float speed = 5f;
-    public Rigidbody2D rb;
-    public MovementDirection curDirection;
     public GameObject Lantern;
     public Vector3 lanternRotationOffset;
     public TMP_Text interactText;
-    public PlayerStatus PlayerStatus;
-    
+    public GameObject NierItem;
+    public float getterRadius;
+
+    // Private fields
+    private Rigidbody2D rb;
+    private MovementDirection curDirection;
+
     private void Start()
     {
+        // Initialize Rigidbody2D component
+
         rb = GetComponent<Rigidbody2D>();
+        PlayerStatus = GetComponent<PlayerStatus>();
+        playerEquippment = GetComponent<PlayerEquippment>();
+        playerAttackSystem = GetComponent<PlayerAttackSystem>();
+
     }
 
     private void Update()
     {
+        // Check for player status display input
         if (Input.GetKeyDown(KeyCode.L))
         {
-            // print all Player Status on Unity Console
-            Debug.Log("Strength: " + PlayerStatus.Strength);
-            Debug.Log("Dexterity: " + PlayerStatus.Dexterity);
-            Debug.Log("Constitution: " + PlayerStatus.Constitution);
-            Debug.Log("Intelligence: " + PlayerStatus.Intelligence);
-            Debug.Log("Wisdom: " + PlayerStatus.Wisdom);
-            Debug.Log("Charisma: " + PlayerStatus.Charisma);
+            DisplayPlayerStatus();
         }
+
+        // Handle player movement
         Move();
-         CheckForNearbyItems(); // Check for nearby items in each frame
-        // Obtém a posição do mouse na tela
-        Vector3 mousePosition = Input.mousePosition;
 
-        // Converte a posição do mouse para coordenadas do mundo
-        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-        mousePosition.z = Lantern.transform.position.z; // Mantém a mesma profundidade da lanterna
+        // Check for nearby items
+        CheckForNearbyItems();
 
-        // Calcula a direção entre a lanterna e a posição do mouse
-        Vector3 direction = mousePosition - Lantern.transform.position;
+        // Handle lantern rotation towards mouse position
+        RotateLanternTowardsMouse();
 
-        // Calcula o ângulo em que a lanterna deve rotacionar
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        // Ajusta a rotação da lanterna para apontar na direção do mouse com o offset
-        Lantern.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle) + lanternRotationOffset);
-
+        // Check for item interaction input
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (NierItem != null)
-            {
-                PlayerStatus.AddItem(NierItem.GetComponent<DroppedItem>().item);
-                Destroy(NierItem);
-                interactText.text = "";
-            }
+            InteractWithItem();
         }
+    }
+
+    private void DisplayPlayerStatus()
+    {
+        Debug.Log("Strength: " + PlayerStatus.Strength);
+        Debug.Log("Dexterity: " + PlayerStatus.Dexterity);
+        Debug.Log("Constitution: " + PlayerStatus.Constitution);
+        Debug.Log("Intelligence: " + PlayerStatus.Intelligence);
+        Debug.Log("Wisdom: " + PlayerStatus.Wisdom);
+        Debug.Log("Charisma: " + PlayerStatus.Charisma);
     }
 
     private void Move()
     {
+        // Get input axes
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
-        Vector2 direction = new Vector2(x, y).normalized; // Normalize the direction to ensure consistent speed
+        // Calculate movement direction and apply velocity
+        Vector2 direction = new Vector2(x, y).normalized;
         rb.velocity = direction * speed;
 
+        // Update current movement direction
         if (x > 0)
         {
             curDirection = MovementDirection.Right;
@@ -96,13 +101,34 @@ public class Player : Entity
         }
     }
 
-    public GameObject NierItem;
-    public float getterRadius;
+    private void RotateLanternTowardsMouse()
+    {
+        // Get mouse position in world coordinates
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = Lantern.transform.position.z;
+
+        // Calculate direction and angle to rotate lantern
+        Vector3 direction = mousePosition - Lantern.transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Apply rotation with offset
+        Lantern.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle) + lanternRotationOffset);
+    }
+
+    private void InteractWithItem()
+    {
+        if (NierItem != null)
+        {
+            PlayerStatus.AddItem(NierItem.GetComponent<DroppedItem>().item);
+            Destroy(NierItem);
+            interactText.text = "";
+        }
+    }
 
     private void CheckForNearbyItems()
     {
-        float radius = 1.5f; // Define the radius to check for nearby items
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, getterRadius, LayerMask.GetMask("Items")); // Find all colliders within the radius
+        // Define the radius to check for nearby items
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, getterRadius, LayerMask.GetMask("Items"));
 
         foreach (var hitCollider in hitColliders)
         {
@@ -119,11 +145,8 @@ public class Player : Entity
         NierItem = null;
     }
 
-  
-
     private void ShowCollectItem(Item item)
     {
         interactText.text = "Pressione E para pegar " + item.Name;
     }
 }
-
