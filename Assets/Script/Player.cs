@@ -45,8 +45,15 @@ public class Player : Entity
         HandleInput();
         Move();
         CheckForNearbyItems();
+        CheckForNearbyInteractive();
         RotateLanternTowardsMouse();
         UpdatePlayerStatus();
+
+        if(NierInteract == null && NierItem == null)
+        {
+            interactText.text = "";
+        }
+        
     }
 
     private void HandleInput()
@@ -140,7 +147,39 @@ public class Player : Entity
             interactText.text = "";
         }
     }
+    
+    public GameObject NierInteract;
 
+    private void InteractWithScene()
+    {
+        if (NierInteract != null)
+        {
+            NierInteract.GetComponent<IInteractive>().Interact();
+            interactText.text = "";
+        }
+    }
+    private void CheckForNearbyInteractive()
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, getterRadius, LayerMask.GetMask("Interactive"));
+        foreach (var hitCollider in hitColliders)
+        {
+            Debug.Log(hitCollider.name);
+            if (hitCollider.CompareTag("Interactive"))
+            {
+                ShowInteract(hitCollider.GetComponent<IInteractive>());
+                NierInteract = hitCollider.gameObject;
+                Debug.Log("Interact with " + hitCollider.name);
+                return;
+            }
+        }
+        interactText.text = "";
+        NierInteract = null;
+    }
+
+    private void ShowInteract(IInteractive interactive)
+    {
+        interactText.text = "Pressione E para interagir";
+    }
     private void CheckForNearbyItems()
     {
         // Define the radius to check for nearby items
@@ -152,6 +191,7 @@ public class Player : Entity
             {
                 ShowCollectItem(hitCollider.GetComponent<DroppedItem>().item);
                 NierItem = hitCollider.gameObject;
+                Debug.Log("Collect " + hitCollider.name);
                 return; // Exit after finding the first item
             }
         }
