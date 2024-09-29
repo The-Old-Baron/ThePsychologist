@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class EnemyController : Entity
 {
@@ -20,7 +21,7 @@ public class EnemyController : Entity
     private float curRadio = 0.89f;
     private bool collidingWithPlayer;
 
-    private void Start()
+    internal void Start()
     {
         // Find flag in the scene
         flag = GameObject.Find("Flag");
@@ -34,42 +35,11 @@ public class EnemyController : Entity
         // Initialize light properties
         light.color = enemy.lightColor;
         light.intensity = enemy.lightIntensity;
-
+        
         // Initialize life bar
         lifeBar.maxValue = enemy.maxHealth;
         Life = enemy.maxHealth;
         UpdateLifeBar();
-    }
-
-    private void Update()
-    {
-        // Chase player if within range
-        if (Vector2.Distance(transform.position, Player.Instance.transform.position) <= enemy.chaseRange)
-        {
-            Vector2 direction = (Player.Instance.transform.position - transform.position).normalized;
-            rb.MovePosition(rb.position + direction * enemy.speed * Time.deltaTime);
-        }
-
-        // Check for attack
-        var raycast = Physics2D.Raycast(transform.position, Player.Instance.transform.position - transform.position, enemy.attackRange, LayerMask.GetMask("Player"));
-        if (raycast && Time.time >= lastAttackTime + enemy.attackCooldown)
-        {
-            Attack();
-            lastAttackTime = Time.time;
-        }
-
-        // Check for healing
-        if (enemy.heallingCooldown > 0 && Time.time >= lastAttackTime + enemy.heallingCooldown)
-        {
-            Healling();
-            lastAttackTime = Time.time;
-        }
-    }
-
-    private void Attack()
-    {
-        // Inflict damage to the player
-        Player.Instance.TakeDamage(enemy.damage);
     }
 
     public void TakeDamage(float damage, Vector2 knockbackDirection)

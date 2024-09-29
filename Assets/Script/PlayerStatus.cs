@@ -1,24 +1,50 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour
 {
-    public int Strength { get; private set; }
-    public int Dexterity { get; private set; }
-    public int Constitution { get; private set; }
-    public int Intelligence { get; private set; }
-    public int Wisdom { get; private set; }
-    public int Charisma { get; private set; }
+    public int Strength;
+    public int Dexterity;
+    public int Constitution;
+    public int Intelligence;
+    public int Wisdom;
+    public int Charisma;
 
-    public int Health { get; private set; }
-    public int Damage { get; private set; }
-    public int Speed { get; private set; }
-    public int AttackCooldown { get; private set; }
-    public int Defence { get; private set; }
-    public int Proficience { get; private set; }
+    public int Health;
+    public int Damage;
+    public int Speed;
+    public int AttackCooldown;
+    public int Defence;
+    public int Proficience; 
 
     private Dictionary<string, Item> inventory = new Dictionary<string, Item>();
+
+    public TMP_Text CollectedItemsText;
+
+    public int GetHealth()
+    {
+        return Health * Constitution;
+    }
+    public int GetDamage()
+    {
+        return Damage * Strength;
+    }
+    public int GetSpeed()
+    {
+        return Speed * Dexterity;
+    }
+    public int GetAttackCooldown()
+    {
+        return AttackCooldown * Dexterity;
+    }
+    public int GetDefence()
+    {
+        return Defence * Constitution;
+    }
+    
     public void AddProficience(int value)
     {
         Proficience += value;
@@ -26,27 +52,47 @@ public class PlayerStatus : MonoBehaviour
     void Start()
     {
         // Inicializa os status do jogador
-        Strength = 10;
-        Dexterity = 10;
-        Constitution = 10;
-        Intelligence = 10;
-        Wisdom = 10;
-        Charisma = 10;
-        Health = 10;
+        Strength = 1;
+        Dexterity = 1;
+        Constitution = 1;
+        Intelligence = 1;
+        Wisdom = 1;
+        Charisma = 1;
+        Health = 1;
         Damage = 10;
-        Speed = 10;
-        AttackCooldown = 10;
-        Defence = 10;
-        Proficience = 10;
+        Speed = 1;
+        AttackCooldown = 1;
+        Defence = 1;
+        Proficience = 1;
+        CollectedItemsText.text = "";
     }
-   
+    
     public void AddItem(Item item)
     {
         if (!inventory.ContainsKey(item.Name))
         {
             inventory.Add(item.Name, item);
             ModifyStats(item, true);
+            StartCoroutine(ShowCollectedItem(item.Name));
         }
+    }
+
+    private IEnumerator ShowCollectedItem(string itemName)
+    {
+        CollectedItemsText.text = $"Collected: {itemName}";
+        CollectedItemsText.color = new Color(CollectedItemsText.color.r, CollectedItemsText.color.g, CollectedItemsText.color.b, 1);
+
+        yield return new WaitForSeconds(2); // Wait for 2 seconds before starting the fade out
+
+        while (CollectedItemsText.color.a > 0)
+        {
+            Color color = CollectedItemsText.color;
+            color.a -= Time.deltaTime / 2; // Fade out over 2 seconds
+            CollectedItemsText.color = color;
+            yield return null;
+        }
+
+        CollectedItemsText.text = "";
     }
 
     public void RemoveItem(Item item)

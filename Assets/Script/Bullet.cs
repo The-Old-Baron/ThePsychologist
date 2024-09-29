@@ -8,11 +8,14 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
         // Ignora colisão com o jogador
-        if (hitInfo.gameObject.CompareTag("Player"))
+        if (hitInfo.gameObject.CompareTag("Enemy"))
         {
             return;
         }
-
+        if (hitInfo.gameObject.GetComponent<LanternAttack>() != null)
+        {
+            return;
+        }
         // Randomiza a chance de crítico (10% de chance)
         if (Random.value <= 0.1f)
         {
@@ -20,12 +23,8 @@ public class Bullet : MonoBehaviour
         }
 
         // Tenta obter o componente EnemyController do objeto colidido
-        EnemyController enemy = hitInfo.GetComponent<EnemyController>();
-        if (enemy != null)
-        {
-            // Aplica dano ao inimigo
-            enemy.TakeDamage(damage, new Vector2(5, 5));
-        }
+        Vector2 knockbackDirection = (hitInfo.transform.position - transform.position).normalized;
+        Player.Instance.TakeDamage(damage, knockbackDirection, 2);
 
         // Destroi a bala após a colisão
         Destroy(gameObject);

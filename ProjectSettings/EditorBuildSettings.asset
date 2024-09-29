@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level1.unity
     guid: db640deb4d789c2438bfccc7411432cc
+  - enabled: 1
+    path: Assets/Scenes/Proficiencia.unity
+    guid: 4157b1d3db3b8db49965a4ddbc3437d8
   m_configObjects: {}

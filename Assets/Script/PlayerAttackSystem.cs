@@ -46,6 +46,8 @@ public class PlayerAttackSystem : MonoBehaviour
         {
             Attack();
             lastAttackTime = Time.time;
+            attackCooldown = Player.Instance.PlayerStatus.GetAttackCooldown() - attackCooldown;
+
         }
     }
 
@@ -83,7 +85,7 @@ public class PlayerAttackSystem : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePos - transform.position).normalized;
         GameObject projectile = Instantiate(player.playerEquippment.projetilPrefab, transform.position, Quaternion.identity);
-        projectile.GetComponent<Bullet>().damage = player.PlayerStatus.Damage;
+        projectile.GetComponent<Bullet>().damage = player.PlayerStatus.GetDamage();
         projectile.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
 
         Debug.Log("Long-range attack performed.");

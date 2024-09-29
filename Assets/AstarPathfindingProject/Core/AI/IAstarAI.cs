@@ -46,7 +46,7 @@ namespace Pathfinding {
 		Quaternion rotation { get; set; }
 
 		/// <summary>Max speed in world units per second</summary>
-		float maxSpeed { get; set; }
+		public float maxSpeed { get; set; }
 
 		/// <summary>
 		/// Actual velocity that the agent is moving with.
@@ -54,7 +54,7 @@ namespace Pathfinding {
 		///
 		/// See: <see cref="desiredVelocity"/>
 		/// </summary>
-		Vector3 velocity { get; }
+		public Vector3 velocity { get; }
 
 		/// <summary>
 		/// Velocity that this agent wants to move with.

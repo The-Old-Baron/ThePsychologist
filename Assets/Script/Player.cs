@@ -1,3 +1,4 @@
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ public class Player : Entity
     public TMP_Text interactText;
     public GameObject NierItem;
     public float getterRadius;
+    private string saveFilePath;
 
     // Private fields
     private Rigidbody2D rb;
@@ -36,10 +38,38 @@ public class Player : Entity
         PlayerStatus = GetComponent<PlayerStatus>();
         playerEquippment = GetComponent<PlayerEquippment>();
         playerAttackSystem = GetComponent<PlayerAttackSystem>();
+        saveFilePath = Path.Combine(Application.persistentDataPath, "savefile.json");
 
+
+        HandlerLoadPlayerAtr();
         Instance = this;
     }
 
+    public void HandlerLoadPlayerAtr()
+    {
+        if (File.Exists(saveFilePath))
+        {
+            string json = File.ReadAllText(saveFilePath);
+            SaveData saveData = JsonUtility.FromJson<SaveData>(json);
+
+            // Carrega os pontos de proficiência
+            PlayerStatus.Proficience = saveData.proficiencyPoints;
+
+            // Carrega os atributos do jogador
+            PlayerStatus.Strength = saveData.Strength;
+            PlayerStatus.Dexterity = saveData.Dexterity;
+            PlayerStatus.Constitution = saveData.Constitution;
+            PlayerStatus.Intelligence = saveData.Intelligence;
+            PlayerStatus.Wisdom = saveData.Wisdom;
+            PlayerStatus.Charisma = saveData.Charisma;
+
+            Debug.Log("Player attributes loaded from save file.");
+        }
+        else
+        {
+            Debug.LogWarning("Save file not found.");
+        }
+    }
     private void Update()
     {
         HandleInput();
@@ -49,7 +79,7 @@ public class Player : Entity
         RotateLanternTowardsMouse();
         UpdatePlayerStatus();
 
-        if(NierInteract == null && NierItem == null)
+        if (NierInteract == null && NierItem == null)
         {
             interactText.text = "";
         }
@@ -103,7 +133,7 @@ public class Player : Entity
 
         // Calculate movement direction and apply velocity
         Vector2 direction = new Vector2(x, y).normalized;
-        rb.velocity = direction * speed;
+        rb.velocity = direction * speed * Player.Instance.PlayerStatus.GetSpeed();
 
         // Update current movement direction
         if (x > 0)
@@ -211,17 +241,61 @@ public class Player : Entity
         Instance = null;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector2 knockbackDirection, float knockbackForce)
     {
         Life -= damage;
         if (Life <= 0)
         {
             Debug.Log("Player died!");
+            HandlePlayerDeath();
+            // Retorna para o menu porem na tela de proficiencia
+            PlayerHud.Instance.PauseMenu.GameOver();
         }
+        else
+        {
+            ApplyKnockback(knockbackDirection, knockbackForce);
+        }
+    }
+
+    private void ApplyKnockback(Vector2 direction, float force)
+    {
+        rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
     }
 
     public void UpdatePlayerStatus()
     {
         // Placeholder for updating player status
     }
+     private void HandlePlayerDeath()
+    {
+        if (File.Exists(saveFilePath))
+        {
+            string json = File.ReadAllText(saveFilePath);
+            SaveData saveData = JsonUtility.FromJson<SaveData>(json);
+
+            // Adiciona pontos de proficiência
+            saveData.proficiencyPoints += PlayerStatus.Proficience;
+
+            // Salva os dados de volta no arquivo de save
+            json = JsonUtility.ToJson(saveData, true);
+            File.WriteAllText(saveFilePath, json);
+
+            Debug.Log("Proficiency points added to save file.");
+        }
+        else
+        {
+            Debug.LogWarning("Save file not found.");
+        }
+    }
+}
+[System.Serializable]
+public class SaveData
+{
+    public int proficiencyPoints;
+    public int Strength;
+    public int Dexterity;
+    public int Constitution;
+    public int Intelligence;
+    public int Wisdom;
+    public int Charisma;
 }

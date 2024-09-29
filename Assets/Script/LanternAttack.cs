@@ -23,7 +23,7 @@ public class LanternAttack : MonoBehaviour
         foreach (var enemy in enemiesInRange)
         {
             // Aplica dano ao inimigo
-            enemy.GetComponent<EnemyController>().TakeDamage(Player.Instance.PlayerStatus.Damage, new Vector2(1f, 1f));
+            enemy.GetComponent<EnemyController>().TakeDamage(Player.Instance.PlayerStatus.Damage, new Vector2(10f, 10f));
             Debug.Log("Hit: " + enemy.name);
         }
     }

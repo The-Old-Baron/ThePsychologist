@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseGame : MonoBehaviour
 {
@@ -27,7 +28,10 @@ public class PauseGame : MonoBehaviour
         // Desativa o objeto do script
         gameObject.SetActive(false);
     }
-
+    public void GameOver(){
+        // Retorna para a Scene inicial
+        SceneManager.LoadScene("Proficiencia");
+    }
     // Método para pausar o jogo
     public void Pause()
     {
